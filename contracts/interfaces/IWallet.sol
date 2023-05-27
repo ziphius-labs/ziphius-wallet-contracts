@@ -2,4 +2,5 @@
 pragma solidity >=0.8.4;
 
 interface IWallet {
+    event UpdateValidator(address newValidator);
 }
