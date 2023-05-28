@@ -32,6 +32,8 @@ contract Wallet is CoreWallet, IWallet {
     /// @inheritdoc IWallet
     function execute(address dest, uint256 value, bytes calldata func) external override authorized {
         _call(dest, value, func);
+
+        emit Execute();
     }
 
     /// @inheritdoc IWallet
@@ -40,6 +42,7 @@ contract Wallet is CoreWallet, IWallet {
         for (uint256 i = 0; i < dest.length; i++) {
             _call(dest[i], 0, func[i]);
         }
+        emit Execute();
     }
 
     /// @inheritdoc BaseAccount

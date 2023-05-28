@@ -8,14 +8,17 @@ contract ECDSAValidator is IValidator {
     mapping(address => address) _owners;
 
     function register(address owner) external {
+        _owners[msg.sender] = owner;
     }
 
     function transferOwner(address newOwner) external {
+        _owners[msg.sender] = newOwner;
     }
 
     function validateUserOp(UserOperation calldata userOp, bytes32 userOpHash) external view override returns(uint256) {
         return 1;
     }
+
     function validateSignature(bytes32 hash, bytes calldata signature) external view override returns(bool) {
         return true;
     }
