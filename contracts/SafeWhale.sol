@@ -5,28 +5,23 @@ import "@account-abstraction/contracts/core/BaseAccount.sol";
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 
 import "./interfaces/IWallet.sol";
-import "./interfaces/IValidator.sol";
 import "./core/CoreWallet.sol";
 
-contract Wallet is CoreWallet, IWallet {
+contract SafeWhale is CoreWallet, IWallet {
     IEntryPoint private immutable _entryPoint;
 
     constructor(address entryPoint_) {
         _entryPoint = IEntryPoint(entryPoint_);
     }
 
-    /**
-     * modifier validate caller is entrypoint
-     */
-    modifier authorized() {
-        require(msg.sender == address(entryPoint()), "Core Wallet: Invalid Caller");
-        _;
+    function init(address key) external initializer {
+        _setKey(key, true);
     }
 
     /// @inheritdoc CoreWallet
-    function setValidator(bytes4 mode, address validator) external override authorized {
-        _setValidator(mode, validator);
-        emit SetValidator(mode, validator);
+    function setKey(address key, bool isActive) external override authorized {
+        _setKey(key, isActive);
+        emit SetKey(key, isActive);
     }
 
     /// @inheritdoc IWallet

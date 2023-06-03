@@ -6,6 +6,7 @@ interface IWallet {
      * execute a transaction (called directly from owner, or by entryPoint)
      */
     function execute(address dest, uint256 value, bytes calldata func) external;
+
     /**
      * execute a sequence of transactions
      */
