@@ -1,5 +1,5 @@
-# Roll Wallet
-Roll wallet aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs
+# SafeWhale
+SafeWhale aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs
 
 ## Usage
 
