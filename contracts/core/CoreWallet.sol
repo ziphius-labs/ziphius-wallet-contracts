@@ -11,62 +11,53 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/IValidator.sol";
+import "../interfaces/IWallet.sol";
+import "../libraries/SafeWhaleV1Storage.sol";
 
 abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
     using Address for address;
     using ECDSA for bytes32;
+    using WalletStorage for WalletStorage.StorageLayout;
 
-    event SetKey(address key, bool isActive);
+    event SetValidator(address validator, bool isActive);
 
-    mapping(address => bool) public keys;
+    function _isValidCaller() internal virtual view returns(bool);
 
     /**
      * modifier validate caller is entrypoint
      */
     modifier authorized() {
-        require(msg.sender == address(entryPoint()) || keys[msg.sender], "Core Wallet: Invalid Caller");
+        require(_isValidCaller(), "Core Wallet: Invalid Caller");
         _;
     }
 
-    function _initCoreWallet(address initKey) internal onlyInitializing {
-        keys[initKey] = true;
-    }
-
     /**
-     * update sub keys
+     * update add validators
      */
-    function _setKey(address key, bool isActive) internal {
-        keys[key] = isActive;
-    }
-
-    /**
-     * core validate signature
-     */
-    function _validateSignature(
-        address key,
-        bytes32 hash,
-        bytes memory signature
-    ) internal view returns (uint256 validationData) {
-        if (key.isContract()) {
-            validationData = IValidator(key).validateSignature(hash, signature);
-        } else {
-            if (key == hash.recover(signature)) {
-                validationData = 0;
-            } else {
-                validationData = SIG_VALIDATION_FAILED;
-            }
-        }
+    function _setValidator(address validator, bool isActive) internal {
+        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
+        layout.isValidators[validator] = isActive;
     }
 
     /// @inheritdoc BaseAccount
     function _validateSignature(
         UserOperation calldata userOp,
         bytes32 userOpHash
-    ) internal view override returns (uint256 validationData) {
-        (address key, bytes memory signature) = abi.decode(userOp.signature, (address, bytes));
+    ) internal override returns (uint256 validationData) {
+        (address validator, bytes memory signature) = abi.decode(userOp.signature, (address, bytes));
+        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
 
-        if (keys[key]) {
-            validationData = _validateSignature(key, userOpHash.toEthSignedMessageHash(), signature);
+        if (layout.isValidators[validator]) {
+            if (validator.isContract()) {
+                validationData = IValidator(validator).validateUserOp(userOp, userOpHash);
+            } else {
+                bytes32 hash = userOpHash.toEthSignedMessageHash();
+                if (validator == hash.recover(signature)) {
+                    validationData = 0;
+                } else {
+                    validationData = SIG_VALIDATION_FAILED;
+                }
+            }
         } else {
             validationData = SIG_VALIDATION_FAILED;
         }
@@ -87,22 +78,29 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
     /**
      * External function to update validator
      */
-    function setKey(address key, bool isActive) external virtual;
+    function setValidator(address validator, bool isActive) external virtual;
 
     /**
      * validate signature base on IERC1271
      */
     function isValidSignature(bytes32 hash, bytes calldata signature) public view override returns (bytes4 magicValue) {
-        (address key, bytes memory trueSignature) = abi.decode(signature, (address, bytes));
+        (address validator, bytes memory trueSignature) = abi.decode(signature, (address, bytes));
 
-        uint256 validationData;
-        if (keys[key]) {
-            validationData = _validateSignature(key, hash, trueSignature);
+        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
+
+        if (layout.isValidators[validator]) {
+            if (validator.isContract()) {
+                magicValue = IValidator(validator).isValidSignature(hash, trueSignature);
+            } else {
+                if (validator == hash.recover(trueSignature)) {
+                    magicValue = this.isValidSignature.selector;
+                } else {
+                    magicValue = bytes4(0xffffffff) ;
+                }
+            }
         } else {
-            validationData = SIG_VALIDATION_FAILED;
+            magicValue = bytes4(0xffffffff);
         }
-
-        return validationData == SIG_VALIDATION_FAILED ? bytes4(0xffffffff) : this.isValidSignature.selector;
     }
 
     /**
