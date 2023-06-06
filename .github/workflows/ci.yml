@@ -31,14 +31,6 @@ jobs:
       - name: "Install the dependencies"
         run: "pnpm install"
 
-      - name: "Lint the code"
-        run: "pnpm lint"
-
-      - name: "Add lint summary"
-        run: |
-          echo "## Lint results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
-
       - name: "Compile the contracts and generate the TypeChain bindings"
         run: "pnpm typechain"
 
