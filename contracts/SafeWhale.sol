@@ -7,15 +7,21 @@ import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
 import "./interfaces/IWallet.sol";
 import "./core/CoreWallet.sol";
+import "./libraries/DefaultCallbackHandler.sol";
 
-contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable {
+/**
+ * @title SafeWhale Wallet
+ * @author Terry
+ * @notice SafeWhale wallet
+ */
+contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable, DefaultCallbackHandler {
     IEntryPoint private immutable _entryPoint;
 
     constructor(address entryPoint_) {
         _entryPoint = IEntryPoint(entryPoint_);
     }
 
-    function _isValidCaller() internal view override returns (bool) {
+    function _isValidCaller() internal view override(CoreWallet) returns (bool) {
         return msg.sender == address(entryPoint()) || msg.sender == address(this);
     }
 
@@ -24,20 +30,24 @@ contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable {
     }
 
     /// @inheritdoc CoreWallet
-    function setValidator(address validator, bool isActive) external override authorized {
+    function setValidator(address validator, bool isActive) external override(CoreWallet) authorized {
         _setValidator(validator, isActive);
         emit SetValidator(validator, isActive);
     }
 
+    function isValidator(address validator) external view override(CoreWallet) returns (bool) {
+        return _isValidator(validator);
+    }
+
     /// @inheritdoc IWallet
-    function execute(address dest, uint256 value, bytes calldata func) external override authorized {
+    function execute(address dest, uint256 value, bytes calldata func) external override(IWallet) authorized {
         _call(dest, value, func);
         emit Execute();
     }
 
     /// @inheritdoc IWallet
-    function executeBatch(address[] calldata dest, bytes[] calldata func) external override authorized {
-        require(dest.length == func.length, "Roll Wallet: Wrong array lengths");
+    function executeBatch(address[] calldata dest, bytes[] calldata func) external override(IWallet) authorized {
+        require(dest.length == func.length, "Core Wallet: Wrong array lengths");
         for (uint256 i = 0; i < dest.length; i++) {
             _call(dest[i], 0, func[i]);
         }
@@ -52,7 +62,9 @@ contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(DefaultCallbackHandler, CoreWallet) returns (bool) {
         return interfaceId == type(IWallet).interfaceId || super.supportsInterface(interfaceId);
     }
 
@@ -68,6 +80,10 @@ contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable {
      */
     function addDeposit() public payable {
         entryPoint().depositTo{ value: msg.value }(address(this));
+    }
+
+    function withdrawTo(address payable to, uint256 amount) public payable authorized {
+        entryPoint().withdrawTo(to, amount);
     }
 
     function _authorizeUpgrade(address newImplementation) internal view override {

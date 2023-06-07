@@ -7,13 +7,17 @@ import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/IValidator.sol";
 import "../interfaces/IWallet.sol";
 import "../libraries/SafeWhaleV1Storage.sol";
 
+/**
+ * @title CoreWallet
+ * @author Terry
+ * @notice CoreWallet implement authentication methods in Smart Contracts Wallet inherit BaseAccount
+ */
 abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
     using Address for address;
     using ECDSA for bytes32;
@@ -21,7 +25,7 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
 
     event SetValidator(address validator, bool isActive);
 
-    function _isValidCaller() internal virtual view returns(bool);
+    function _isValidCaller() internal view virtual returns (bool);
 
     /**
      * modifier validate caller is entrypoint
@@ -37,6 +41,14 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
     function _setValidator(address validator, bool isActive) internal {
         WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
         layout.isValidators[validator] = isActive;
+    }
+
+    /**
+     * check an address is validator
+     */
+    function _isValidator(address validator) internal view returns (bool) {
+        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
+        return layout.isValidators[validator];
     }
 
     /// @inheritdoc BaseAccount
@@ -81,6 +93,11 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
     function setValidator(address validator, bool isActive) external virtual;
 
     /**
+     * External function to update validator
+     */
+    function isValidator(address validator) external view virtual returns (bool);
+
+    /**
      * validate signature base on IERC1271
      */
     function isValidSignature(bytes32 hash, bytes calldata signature) public view override returns (bytes4 magicValue) {
@@ -95,7 +112,7 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
                 if (validator == hash.recover(trueSignature)) {
                     magicValue = this.isValidSignature.selector;
                 } else {
-                    magicValue = bytes4(0xffffffff) ;
+                    magicValue = bytes4(0xffffffff);
                 }
             }
         } else {
