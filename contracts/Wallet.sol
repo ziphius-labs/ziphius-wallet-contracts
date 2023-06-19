@@ -6,36 +6,48 @@ import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
 import "./interfaces/IWallet.sol";
-import "./core/CoreWallet.sol";
+import "./core/AbstractionEngine.sol";
 import "./libraries/DefaultCallbackHandler.sol";
 
 /**
- * @title SafeWhale Wallet
+ * @title Ziphius Wallet
  * @author Terry
- * @notice SafeWhale wallet
+ * @notice Ziphius wallet
  */
-contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable, DefaultCallbackHandler {
+contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackHandler {
     IEntryPoint private immutable _entryPoint;
 
     constructor(address entryPoint_) {
         _entryPoint = IEntryPoint(entryPoint_);
     }
 
-    function _isValidCaller() internal view override(CoreWallet) returns (bool) {
+    function _isValidCaller() internal view override(AbstractionEngine) returns (bool) {
         return msg.sender == address(entryPoint()) || msg.sender == address(this);
+    }
+
+    /**
+     * execute a transactions
+     */
+    function _call(address target, uint256 value, bytes memory data) internal {
+        (bool success, bytes memory result) = target.call{ value: value }(data);
+        if (!success) {
+            assembly {
+                revert(add(result, 32), mload(result))
+            }
+        }
     }
 
     function init(address validator) external initializer {
         _setValidator(validator, true);
     }
 
-    /// @inheritdoc CoreWallet
-    function setValidator(address validator, bool isActive) external override(CoreWallet) authorized {
+    /// @inheritdoc AbstractionEngine
+    function setValidator(address validator, bool isActive) external override(AbstractionEngine) authorized {
         _setValidator(validator, isActive);
         emit SetValidator(validator, isActive);
     }
 
-    function isValidator(address validator) external view override(CoreWallet) returns (bool) {
+    function isValidator(address validator) external view override(AbstractionEngine) returns (bool) {
         return _isValidator(validator);
     }
 
@@ -64,7 +76,7 @@ contract SafeWhale is CoreWallet, IWallet, UUPSUpgradeable, DefaultCallbackHandl
      */
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(DefaultCallbackHandler, CoreWallet) returns (bool) {
+    ) public view virtual override(DefaultCallbackHandler, AbstractionEngine) returns (bool) {
         return interfaceId == type(IWallet).interfaceId || super.supportsInterface(interfaceId);
     }
 
