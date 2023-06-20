@@ -1,10 +1,10 @@
 {
-  "name": "@The-Proof-Labs/roll-wallet-contracts",
-  "description": "Roll wallet aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs",
+  "name": "@ziphius-labs/ziphius-wallet-contracts",
+  "description": "Ziphius wallet aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs",
   "version": "1.0.0",
   "author": {
-    "name": "The-Proof-Labs",
-    "url": "https://github.com/The-Proof-Labs"
+    "name": "Ziphius Labs",
+    "url": "https://github.com/ziphius-labs"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -78,7 +78,8 @@
     "postinstall": "DOTENV_CONFIG_PATH=./.env.example pnpm typechain",
     "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
     "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
-    "test": "hardhat test",
+    "test": "forge test -vv",
+    "test:watch": "forge test --watch -vv",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {
