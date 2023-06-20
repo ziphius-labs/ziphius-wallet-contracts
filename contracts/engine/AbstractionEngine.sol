@@ -56,7 +56,8 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
         UserOperation calldata userOp,
         bytes32 userOpHash
     ) internal override returns (uint256 validationData) {
-        (address validator, bytes memory signature) = abi.decode(userOp.signature, (address, bytes));
+        address validator = address(bytes20(userOp.signature[:20]));
+        bytes memory signature = userOp.signature[20:];
         WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
 
         if (layout.isValidators[validator]) {
