@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/IValidator.sol";
 import "../interfaces/IWallet.sol";
-import "../storages/AbstractionEngineV1Storage.sol";
+import "./AbstractionEngineV1Storage.sol";
 
 /**
  * @title Abstraction Engine
@@ -31,7 +31,7 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
      * modifier validate caller is entrypoint
      */
     modifier authorized() {
-        require(_isValidCaller(), "Core Wallet: Invalid Caller");
+        require(_isValidCaller(), "Abstraction Engine: Invalid Caller");
         _;
     }
 
@@ -61,7 +61,7 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
 
         if (layout.isValidators[validator]) {
             if (validator.isContract()) {
-                validationData = IValidator(validator).validateUserOp(userOp, userOpHash);
+                validationData = IValidator(validator).validateSignature(userOp, userOpHash);
             } else {
                 bytes32 hash = userOpHash.toEthSignedMessageHash();
                 if (validator == hash.recover(signature)) {

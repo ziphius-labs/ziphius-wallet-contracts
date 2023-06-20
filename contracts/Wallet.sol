@@ -6,7 +6,7 @@ import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
 import "./interfaces/IWallet.sol";
-import "./core/AbstractionEngine.sol";
+import "./engine/AbstractionEngine.sol";
 import "./libraries/DefaultCallbackHandler.sol";
 
 /**
@@ -100,6 +100,6 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
 
     function _authorizeUpgrade(address newImplementation) internal view override {
         (newImplementation);
-        require(_isValidCaller(), "Core Wallet: Invalid Caller");
+        require(_isValidCaller(), "Wallet: Invalid Caller");
     }
 }
