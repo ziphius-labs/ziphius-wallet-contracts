@@ -11,14 +11,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/IValidator.sol";
 import "../interfaces/IWallet.sol";
-import "../libraries/SafeWhaleV1Storage.sol";
+import "../storages/AbstractionEngineV1Storage.sol";
 
 /**
- * @title CoreWallet
+ * @title Abstraction Engine
  * @author Terry
  * @notice CoreWallet implement authentication methods in Smart Contracts Wallet inherit BaseAccount
  */
-abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
+abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializable {
     using Address for address;
     using ECDSA for bytes32;
     using WalletStorage for WalletStorage.StorageLayout;
@@ -72,18 +72,6 @@ abstract contract CoreWallet is IERC1271, BaseAccount, ERC165, Initializable {
             }
         } else {
             validationData = SIG_VALIDATION_FAILED;
-        }
-    }
-
-    /**
-     * execute a transactions
-     */
-    function _call(address target, uint256 value, bytes memory data) internal {
-        (bool success, bytes memory result) = target.call{ value: value }(data);
-        if (!success) {
-            assembly {
-                revert(add(result, 32), mload(result))
-            }
         }
     }
 
