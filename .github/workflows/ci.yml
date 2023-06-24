@@ -16,28 +16,21 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-
-      - name: "Install Pnpm"
-        uses: "pnpm/action-setup@v2"
         with:
-          version: "8"
+          submodules: recursive
 
-      - name: "Install Node.js"
-        uses: "actions/setup-node@v3"
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
         with:
-          cache: "pnpm"
-          node-version: "lts/*"
+          version: nightly
 
-      - name: "Install the dependencies"
-        run: "pnpm install"
-
-      - name: "Compile the contracts and generate the TypeChain bindings"
-        run: "pnpm typechain"
-
-      - name: "Test the contracts and generate the coverage report"
-        run: "pnpm coverage"
-
-      - name: "Add test summary"
+      - name: Run Forge build
         run: |
-          echo "## Test results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+          forge --version
+          forge build --sizes
+        id: build
+
+      - name: Run Forge tests
+        run: |
+          forge test -vvv
+        id: test
