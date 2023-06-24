@@ -30,13 +30,13 @@ jobs:
           cache: "pnpm"
           node-version: "lts/*"
 
-      - name: "Install the dependencies"
-        run: "pnpm install"
-
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+
+      - name: "Install the dependencies"
+        run: "pnpm install"
 
       - name: Run Forge build
         run: |
