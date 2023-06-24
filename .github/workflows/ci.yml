@@ -19,6 +19,20 @@ jobs:
         with:
           submodules: recursive
 
+      - name: "Install Pnpm"
+        uses: "pnpm/action-setup@v2"
+        with:
+          version: "8"
+
+      - name: "Install Node.js"
+        uses: "actions/setup-node@v3"
+        with:
+          cache: "pnpm"
+          node-version: "lts/*"
+
+      - name: "Install the dependencies"
+        run: "pnpm install"
+
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
