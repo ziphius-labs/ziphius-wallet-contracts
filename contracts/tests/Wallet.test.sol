@@ -13,6 +13,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 using ERC4337Utils for EntryPoint;
+
 contract WalletTest is Test {
 
     EntryPoint entryPoint;
@@ -37,8 +38,7 @@ contract WalletTest is Test {
 
         vm.deal(address(walletAddress), 1 ether);
 
-        UserOperation memory op =
-            entryPoint.fillUserOp(address(walletAddress), "");
+        UserOperation memory op = entryPoint.fillUserOp(address(walletAddress), "");
         op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, bytes32(uint256(1))));
         op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
 
@@ -49,13 +49,13 @@ contract WalletTest is Test {
     }
 
     function test_SendEth() external {
-        Wallet walletAddress = Wallet(walletFactory.getWalletAddress(owner, bytes32(uint256(1))));
+        Wallet wallet = Wallet(walletFactory.getWalletAddress(owner, bytes32(uint256(1))));
 
-        vm.deal(address(walletAddress), 1 ether);
+        vm.deal(address(wallet), 1 ether);
 
-        UserOperation memory op =
-            entryPoint.fillUserOp(address(walletAddress), "");
+        UserOperation memory op = entryPoint.fillUserOp(address(wallet), "");
         op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, bytes32(uint256(1))));
+        op.callData = abi.encodeWithSelector(wallet.execute.selector, beneficiary, 1, "");
         op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
 
         UserOperation[] memory ops = new UserOperation[](1);

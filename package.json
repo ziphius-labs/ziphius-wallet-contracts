@@ -62,7 +62,8 @@
     "solidity",
     "template",
     "typescript",
-    "typechain"
+    "typechain",
+    "ziphius"
   ],
   "publishConfig": {
     "access": "public"

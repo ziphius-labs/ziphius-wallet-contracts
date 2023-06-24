@@ -25,6 +25,9 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
 
     event SetValidator(address validator, bool isActive);
 
+    /**
+     * @notice authorize caller
+     */
     function _isValidCaller() internal view virtual returns (bool);
 
     /**
@@ -62,7 +65,7 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
 
         if (layout.isValidators[validator]) {
             if (validator.isContract()) {
-                validationData = IValidator(validator).validateSignature(userOp, userOpHash);
+                validationData = IValidator(validator).validateUserOp(userOp, userOpHash);
             } else {
                 bytes32 hash = userOpHash.toEthSignedMessageHash();
                 if (validator == hash.recover(signature)) {
@@ -90,7 +93,8 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
      * validate signature base on IERC1271
      */
     function isValidSignature(bytes32 hash, bytes calldata signature) public view override returns (bytes4 magicValue) {
-        (address validator, bytes memory trueSignature) = abi.decode(signature, (address, bytes));
+        address validator = address(bytes20(signature[:20]));
+        bytes memory trueSignature = signature[20:];
 
         WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
 

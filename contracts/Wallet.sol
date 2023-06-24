@@ -21,8 +21,11 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
         _entryPoint = IEntryPoint(entryPoint_);
     }
 
+    /**
+     * @notice only accept entrypoint
+     */
     function _isValidCaller() internal view override(AbstractionEngine) returns (bool) {
-        return msg.sender == address(entryPoint()) || msg.sender == address(this);
+        return msg.sender == address(entryPoint());
     }
 
     /**
@@ -58,10 +61,10 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
     }
 
     /// @inheritdoc IWallet
-    function executeBatch(address[] calldata dest, bytes[] calldata func) external override(IWallet) authorized {
+    function executeBatch(address[] calldata dest, uint256[] calldata values, bytes[] calldata func) external override(IWallet) authorized {
         require(dest.length == func.length, "Core Wallet: Wrong array lengths");
         for (uint256 i = 0; i < dest.length; i++) {
-            _call(dest[i], 0, func[i]);
+            _call(dest[i], values[i], func[i]);
         }
         emit Execute();
     }
@@ -81,23 +84,9 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
     }
 
     /**
-     * check current account deposit in the entryPoint
+     * @notice authorize to upgrade
+     * @param newImplementation new implement of wallet
      */
-    function getDeposit() public view returns (uint256) {
-        return entryPoint().balanceOf(address(this));
-    }
-
-    /**
-     * deposit more funds for this account in the entryPoint
-     */
-    function addDeposit() public payable {
-        entryPoint().depositTo{ value: msg.value }(address(this));
-    }
-
-    function withdrawTo(address payable to, uint256 amount) public payable authorized {
-        entryPoint().withdrawTo(to, amount);
-    }
-
     function _authorizeUpgrade(address newImplementation) internal view override {
         (newImplementation);
         require(_isValidCaller(), "Wallet: Invalid Caller");
