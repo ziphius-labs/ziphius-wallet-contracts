@@ -11,59 +11,33 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "../interfaces/IValidator.sol";
 import "../interfaces/IWallet.sol";
-import "./AbstractionEngineV1Storage.sol";
+import "../interfaces/IKeyStore.sol";
+import "./WalletStorage.sol";
 
 /**
  * @title Abstraction Engine
  * @author Terry
  * @notice CoreWallet implement authentication methods in Smart Contracts Wallet inherit BaseAccount
  */
-abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializable {
+abstract contract AbstractionEngine is BaseAccount, IERC1271, ERC165, Initializable {
     using Address for address;
     using ECDSA for bytes32;
-    using WalletStorage for WalletStorage.StorageLayout;
 
-    event SetValidator(address validator, bool isActive);
-
-    /**
-     * @notice authorize caller
-     */
-    function _isValidCaller() internal view virtual returns (bool);
+    event SetValidator(address[] validators, bool[] isActives);
 
     /**
-     * modifier validate caller is entrypoint
+     * validate userOp
      */
-    modifier authorized() {
-        require(_isValidCaller(), "Abstraction Engine: Invalid Caller");
-        _;
-    }
-
-    /**
-     * update add validators
-     */
-    function _setValidator(address validator, bool isActive) internal {
-        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
-        layout.isValidators[validator] = isActive;
-    }
-
-    /**
-     * check an address is validator
-     */
-    function _isValidator(address validator) internal view returns (bool) {
-        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
-        return layout.isValidators[validator];
-    }
-
-    /// @inheritdoc BaseAccount
-    function _validateSignature(
+    function _validateUserOp(
         UserOperation calldata userOp,
         bytes32 userOpHash
-    ) internal override returns (uint256 validationData) {
+    ) internal returns (uint256 validationData) {
         address validator = address(bytes20(userOp.signature[:20]));
         bytes memory signature = userOp.signature[20:];
-        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
 
-        if (layout.isValidators[validator]) {
+        IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
+
+        if (keyStore.isValidator(validator)) {
             if (validator.isContract()) {
                 validationData = IValidator(validator).validateUserOp(userOp, userOpHash);
             } else {
@@ -82,7 +56,7 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
     /**
      * External function to update validator
      */
-    function setValidator(address validator, bool isActive) external virtual;
+    function setValidators(address[] memory validator, bool[] memory isActive, uint256 walletIndex) external virtual;
 
     /**
      * External function to update validator
@@ -96,9 +70,9 @@ abstract contract AbstractionEngine is IERC1271, BaseAccount, ERC165, Initializa
         address validator = address(bytes20(signature[:20]));
         bytes memory trueSignature = signature[20:];
 
-        WalletStorage.StorageLayout storage layout = WalletStorage.getStorage();
+        IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
 
-        if (layout.isValidators[validator]) {
+        if (keyStore.isValidator(validator)) {
             if (validator.isContract()) {
                 magicValue = IValidator(validator).isValidSignature(hash, trueSignature);
             } else {

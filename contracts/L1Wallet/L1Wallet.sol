@@ -4,17 +4,20 @@ pragma solidity >=0.8.4;
 import "@account-abstraction/contracts/core/BaseAccount.sol";
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import "./interfaces/IWallet.sol";
-import "./engine/AbstractionEngine.sol";
-import "./libraries/DefaultCallbackHandler.sol";
+import "../interfaces/IWallet.sol";
+import "../engine/AbstractionEngine.sol";
+import "../engine/WalletStorage.sol";
+import "../libraries/DefaultCallbackHandler.sol";
+import "./KeyStore.sol";
 
 /**
  * @title Ziphius Wallet
  * @author Terry
  * @notice Ziphius wallet
  */
-contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackHandler {
+contract Layer1Wallet is IWallet, DefaultCallbackHandler, Initializable {
     IEntryPoint private immutable _entryPoint;
 
     constructor(address entryPoint_) {
@@ -69,11 +72,6 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
         emit Execute();
     }
 
-    /// @inheritdoc BaseAccount
-    function entryPoint() public view virtual override returns (IEntryPoint) {
-        return _entryPoint;
-    }
-
     /**
      * @dev See {IERC165-supportsInterface}.
      */
@@ -81,14 +79,5 @@ contract Wallet is AbstractionEngine, IWallet, UUPSUpgradeable, DefaultCallbackH
         bytes4 interfaceId
     ) public view virtual override(DefaultCallbackHandler, AbstractionEngine) returns (bool) {
         return interfaceId == type(IWallet).interfaceId || super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @notice authorize to upgrade
-     * @param newImplementation new implement of wallet
-     */
-    function _authorizeUpgrade(address newImplementation) internal view override {
-        (newImplementation);
-        require(_isValidCaller(), "Wallet: Invalid Caller");
     }
 }
