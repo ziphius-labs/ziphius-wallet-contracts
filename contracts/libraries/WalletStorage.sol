@@ -9,4 +9,8 @@ library WalletStorage {
     function getKeyStore() internal view returns(address) {
         return StorageSlot.getAddressSlot(_KEYSTORE_POSITION).value;
     }
+
+    function setKeyStore(address keyStore) internal {
+        StorageSlot.getAddressSlot(_KEYSTORE_POSITION).value = keyStore;
+    }
 }

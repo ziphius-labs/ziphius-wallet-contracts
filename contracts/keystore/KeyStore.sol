@@ -5,33 +5,39 @@ import "@account-abstraction/contracts/core/BaseAccount.sol";
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import "../libraries/CustomERC1967Proxy.sol";
+import "../libraries/CustomERC1967.sol";
+
+import "../interfaces/IKeyStore.sol";
 
 /**
  * @title Ziphius Wallet
  * @author Terry
  * @notice Ziphius wallet
  */
-contract KeyStore {
+contract KeyStore is IKeyStore, Initializable {
     address private immutable _factory;
     mapping(address => bool) private _validators;
 
     event SetValidator(address[] validators, bool[] isActives);
 
-    constructor(address initValidator) {
+    constructor() {
         _factory = msg.sender;
+    }
+
+    function init(address initValidator) external initializer {
         _validators[initValidator] = true;
     }
 
     /**
-     * @notice only accept entrypoint
+     * @notice only accept wallet
      */
-    function _requireFromWallet(uint256 walletIndex) internal view returns (bool) {
+    function _requireFromWallet(uint256 walletIndex) internal view {
         bytes32 salt = keccak256(abi.encode(address(this), walletIndex));
         address wallet = Create2.computeAddress(salt, keccak256(abi.encodePacked(
             type(CustomERC1967).creationCode,
-            "",
+            ""
         )), _factory);
 
         require(wallet == msg.sender, "Invalid caller");
@@ -47,7 +53,7 @@ contract KeyStore {
         emit SetValidator(validators, isActives);
     }
 
-    function isValidator(address validator) external view returns (bool) {
+    function isValidator(address validator) external view override returns (bool) {
         return _validators[validator];
     }
 }

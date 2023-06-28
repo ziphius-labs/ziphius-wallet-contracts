@@ -4,8 +4,8 @@ pragma solidity >=0.8.4;
 import "@account-abstraction/contracts/core/EntryPoint.sol";
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 
-import "../WalletFactory.sol";
-import "../Wallet.sol";
+import "../EthereumWallet/EthereumWalletFactory.sol";
+import "../EthereumWallet/EthereumWallet.sol";
 
 import "./ERC4337Utils.sol";
 
@@ -14,10 +14,10 @@ import "forge-std/console.sol";
 
 using ERC4337Utils for EntryPoint;
 
-contract WalletTest is Test {
+contract EthereumWalletTest is Test {
 
     EntryPoint entryPoint;
-    WalletFactory walletFactory;
+    EthereumWalletFactory walletFactory;
 
     address owner;
     uint256 ownerKey;
@@ -29,17 +29,18 @@ contract WalletTest is Test {
         owner = vm.addr(ownerKey);
         entryPoint = new EntryPoint();
 
-        walletFactory = new WalletFactory(address(entryPoint));
+        walletFactory = new EthereumWalletFactory(address(entryPoint));
         beneficiary = payable(address(vm.addr(uint256(keccak256("beneficiary")))));
     }
 
     function test_CreateWallet() external {
-        Wallet walletAddress = Wallet(walletFactory.getWalletAddress(owner, bytes32(uint256(1))));
+        KeyStore keyStoreAddress = KeyStore(walletFactory.getKeyStoreAddress(bytes32(uint256(1))));
+        EthereumWallet wallet = EthereumWallet(walletFactory.getWalletAddress(address(keyStoreAddress), uint256(0)));
 
-        vm.deal(address(walletAddress), 1 ether);
+        vm.deal(address(wallet), 1 ether);
 
-        UserOperation memory op = entryPoint.fillUserOp(address(walletAddress), "");
-        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, bytes32(uint256(1))));
+        UserOperation memory op = entryPoint.fillUserOp(address(wallet), "");
+        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, uint256(0), bytes32(uint256(1))));
         op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
 
         UserOperation[] memory ops = new UserOperation[](1);
@@ -49,12 +50,13 @@ contract WalletTest is Test {
     }
 
     function test_SendEth() external {
-        Wallet wallet = Wallet(walletFactory.getWalletAddress(owner, bytes32(uint256(1))));
+        KeyStore keyStoreAddress = KeyStore(walletFactory.getKeyStoreAddress(bytes32(uint256(1))));
+        EthereumWallet wallet = EthereumWallet(walletFactory.getWalletAddress(address(keyStoreAddress), uint256(0)));
 
         vm.deal(address(wallet), 1 ether);
 
         UserOperation memory op = entryPoint.fillUserOp(address(wallet), "");
-        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, bytes32(uint256(1))));
+        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, uint256(0), bytes32(uint256(1))));
         op.callData = abi.encodeWithSelector(wallet.execute.selector, beneficiary, 1, "");
         op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
 
