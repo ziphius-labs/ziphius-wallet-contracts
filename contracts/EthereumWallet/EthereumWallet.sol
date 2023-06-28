@@ -82,6 +82,7 @@ contract EthereumWallet is IWallet, BaseAccount, Initializable, DefaultCallbackH
      * execute a transactions
      */
     function _call(address target, uint256 value, bytes memory data) internal {
+        require(target != WalletStorage.getKeyStore(), "Ziphius: Don't trigger keystore");
         (bool success, bytes memory result) = target.call{ value: value }(data);
         if (!success) {
             assembly {
@@ -103,6 +104,11 @@ contract EthereumWallet is IWallet, BaseAccount, Initializable, DefaultCallbackH
             _call(dest[i], values[i], func[i]);
         }
         emit Execute();
+    }
+
+    function setValidators(address[] calldata validators, bool[] calldata isActives, uint256 walletIndex) external authorized {
+        IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
+        keyStore.setValidators(validators, isActives, walletIndex);
     }
 
     function entryPoint() public view override returns (IEntryPoint) {

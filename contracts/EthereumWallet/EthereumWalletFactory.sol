@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/utils/Create2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
-import "./EthereumWallet.sol";
 import "../libraries/CustomERC1967.sol";
 import "../keystore/KeyStore.sol";
+import "./EthereumWallet.sol";
 
 /**
  * @title Ethereum Wallet Factory

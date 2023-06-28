@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/EthereumWallet/EthereumWallet.sol": {
-      "lastModificationDate": 1687935666459,
-      "contentHash": "be0ede203105bd7f9deec68e90b339df",
+      "lastModificationDate": 1687936934329,
+      "contentHash": "b87afc70784549a4e411dcaf3a44e90d",
       "sourceName": "contracts/EthereumWallet/EthereumWallet.sol",
       "solcConfig": {
         "settings": {
@@ -86,7 +86,8 @@
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
         "node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
         "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "node_modules/forge-std/console.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -96,8 +97,8 @@
       }
     },
     "contracts/EthereumWallet/EthereumWalletFactory.sol": {
-      "lastModificationDate": 1687934496894,
-      "contentHash": "bbcf3361af5241a8c36bc307ba7421a4",
+      "lastModificationDate": 1687935847289,
+      "contentHash": "fef036024384078079c6109fd8328080",
       "sourceName": "contracts/EthereumWallet/EthereumWalletFactory.sol",
       "solcConfig": {
         "settings": {
@@ -173,7 +174,8 @@
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
         "node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
         "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "node_modules/forge-std/console.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -183,8 +185,8 @@
       }
     },
     "contracts/interfaces/IKeyStore.sol": {
-      "lastModificationDate": 1687933933324,
-      "contentHash": "33c0653bf2cc45d53df894f8ba5d2b68",
+      "lastModificationDate": 1687936856330,
+      "contentHash": "ef6c14d1802b8b42806ed0ccf5cae10d",
       "sourceName": "contracts/interfaces/IKeyStore.sol",
       "solcConfig": {
         "settings": {
@@ -313,8 +315,8 @@
       }
     },
     "contracts/keystore/KeyStore.sol": {
-      "lastModificationDate": 1687934004138,
-      "contentHash": "1912a00492626937b0d4657fce0b64fc",
+      "lastModificationDate": 1687936994784,
+      "contentHash": "ffb54b33bdc68d53d9bb749d42e1d1d8",
       "sourceName": "contracts/keystore/KeyStore.sol",
       "solcConfig": {
         "settings": {
@@ -368,7 +370,8 @@
         "node_modules/@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol",
         "node_modules/@openzeppelin/contracts/utils/Create2.sol",
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "node_modules/forge-std/console.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -725,8 +728,8 @@
       }
     },
     "contracts/tests/EthereumWallet.test.sol": {
-      "lastModificationDate": 1687935015347,
-      "contentHash": "1df6ca1aaaf8f6003208c86266419e00",
+      "lastModificationDate": 1687936950477,
+      "contentHash": "6f1ef661aa98fb1561a8c1afc8a5e400",
       "sourceName": "contracts/tests/EthereumWallet.test.sol",
       "solcConfig": {
         "settings": {

@@ -10,6 +10,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../libraries/CustomERC1967.sol";
 
 import "../interfaces/IKeyStore.sol";
+import "forge-std/console.sol";
 
 /**
  * @title Ziphius Wallet
@@ -26,7 +27,7 @@ contract KeyStore is IKeyStore, Initializable {
         _factory = msg.sender;
     }
 
-    function init(address initValidator) external initializer {
+    function init(address initValidator) external override initializer {
         _validators[initValidator] = true;
     }
 
@@ -43,7 +44,7 @@ contract KeyStore is IKeyStore, Initializable {
         require(wallet == msg.sender, "Invalid caller");
     }
 
-    function setValidators(address[] memory validators, bool[] memory isActives, uint256 walletIndex) external {
+    function setValidators(address[] calldata validators, bool[] calldata isActives, uint256 walletIndex) external override {
         _requireFromWallet(walletIndex);
 
         for (uint i = 0; i < validators.length; i++) {

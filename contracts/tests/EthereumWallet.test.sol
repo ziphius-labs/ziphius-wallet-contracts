@@ -65,4 +65,30 @@ contract EthereumWalletTest is Test {
 
         entryPoint.handleOps(ops, beneficiary);
     }
+
+    function test_setValidator() external {
+        KeyStore keyStoreAddress = KeyStore(walletFactory.getKeyStoreAddress(bytes32(uint256(1))));
+        EthereumWallet wallet = EthereumWallet(walletFactory.getWalletAddress(address(keyStoreAddress), uint256(0)));
+
+        vm.deal(address(wallet), 1 ether);
+
+        UserOperation memory op = entryPoint.fillUserOp(address(wallet), "");
+        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, uint256(0), bytes32(uint256(1))));
+        address[] memory newValidators = new address[](1);
+        newValidators[0] = beneficiary;
+        bool[] memory isActives = new bool[](1);
+        isActives[0] = true;
+        op.callData = abi.encodeWithSelector(
+            wallet.setValidators.selector,
+            newValidators,
+            isActives,
+            uint256(0)
+        );
+        op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
+
+        UserOperation[] memory ops = new UserOperation[](1);
+        ops[0] = op;
+
+        entryPoint.handleOps(ops, beneficiary);
+    }
 }
