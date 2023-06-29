@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "../libraries/CustomERC1967.sol";
 import "../keystore/KeyStore.sol";
+
 import "./EthereumWallet.sol";
 
 /**
@@ -30,6 +31,7 @@ contract EthereumWalletFactory {
             return KeyStore(keyStoreAddress);
         }
 
+        // using Clones proxy to saving gas cost
         Clones.cloneDeterministic(address(keyStoreImplement), salt);
         KeyStore(keyStoreAddress).init(initValidator);
 

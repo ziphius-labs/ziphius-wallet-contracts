@@ -13,9 +13,9 @@ import "../interfaces/IKeyStore.sol";
 import "forge-std/console.sol";
 
 /**
- * @title Ziphius Wallet
+ * @title Ziphius Keystore
  * @author Terry
- * @notice Ziphius wallet
+ * @notice Ziphius Keystore, this smart contract will be deploy to Ethereum only
  */
 contract KeyStore is IKeyStore, Initializable {
     address private immutable _factory;
