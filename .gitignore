@@ -18,3 +18,5 @@ types
 coverage.json
 package-lock.json
 yarn.lock
+
+out

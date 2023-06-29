@@ -1,10 +1,10 @@
 {
-  "name": "@The-Proof-Labs/roll-wallet-contracts",
-  "description": "Roll wallet aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs",
+  "name": "@ziphius-labs/ziphius-wallet-contracts",
+  "description": "Ziphius wallet aims to provide a highly customizable wallet using ERC4337, empowering users to personalize their wallets for their specific needs",
   "version": "1.0.0",
   "author": {
-    "name": "The-Proof-Labs",
-    "url": "https://github.com/The-Proof-Labs"
+    "name": "Ziphius Labs",
+    "url": "https://github.com/ziphius-labs"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -13,6 +13,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
+    "@nomicfoundation/hardhat-foundry": "^1.0.1",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
@@ -32,8 +33,9 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "ethers": "^5.7.2",
+    "forge-std": "^1.1.2",
     "fs-extra": "^10.1.0",
-    "hardhat": "^2.12.2",
+    "hardhat": "^2.13.0",
     "hardhat-gas-reporter": "^1.0.9",
     "lodash": "^4.17.21",
     "mocha": "^10.1.0",
@@ -60,14 +62,15 @@
     "solidity",
     "template",
     "typescript",
-    "typechain"
+    "typechain",
+    "ziphius"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && pnpm typechain",
-    "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
+    "compile": "forge build --sizes",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && pnpm typechain",
     "deploy": "hardhat deploy:Greeter",
     "lint": "pnpm lint:sol && pnpm lint:ts && pnpm prettier:check",
@@ -76,7 +79,8 @@
     "postinstall": "DOTENV_CONFIG_PATH=./.env.example pnpm typechain",
     "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
     "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
-    "test": "hardhat test",
+    "test": "forge test -vv",
+    "test:watch": "forge test --watch -vv",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {

@@ -10,8 +10,6 @@ interface IWallet {
     /**
      * execute a sequence of transactions
      */
-    function executeBatch(address[] calldata dest, bytes[] calldata func) external;
-
-    event UpdateValidator(address newValidator);
+    function executeBatch(address[] calldata dest, uint256[] calldata values, bytes[] calldata func) external;
     event Execute();
 }

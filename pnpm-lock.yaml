@@ -30,6 +30,9 @@ devDependencies:
   '@nomicfoundation/hardhat-chai-matchers':
     specifier: ^1.0.4
     version: 1.0.6(@nomiclabs/hardhat-ethers@2.2.2)(chai@4.3.7)(ethers@5.7.2)(hardhat@2.13.0)
+  '@nomicfoundation/hardhat-foundry':
+    specifier: ^1.0.1
+    version: 1.0.1(hardhat@2.13.0)
   '@nomicfoundation/hardhat-network-helpers':
     specifier: ^1.0.6
     version: 1.0.8(hardhat@2.13.0)
@@ -87,11 +90,14 @@ devDependencies:
   ethers:
     specifier: ^5.7.2
     version: 5.7.2
+  forge-std:
+    specifier: ^1.1.2
+    version: 1.1.2
   fs-extra:
     specifier: ^10.1.0
     version: 10.1.0
   hardhat:
-    specifier: ^2.12.2
+    specifier: ^2.13.0
     version: 2.13.0(ts-node@10.9.1)(typescript@4.9.5)
   hardhat-gas-reporter:
     specifier: ^1.0.9
@@ -859,6 +865,15 @@ packages:
       ethers: 5.7.2
       hardhat: 2.13.0(ts-node@10.9.1)(typescript@4.9.5)
       ordinal: 1.0.3
+    dev: true
+
+  /@nomicfoundation/hardhat-foundry@1.0.1(hardhat@2.13.0):
+    resolution: {integrity: sha512-sQEaX3rik6Gclmek4MqCyOc9+vOM0ZS40eUARrB6K9t6wthqCwJ29CClfxLdbrjn/3MM5hX8ioD+/9OqdGVxSQ==}
+    peerDependencies:
+      hardhat: ^2.12.6
+    dependencies:
+      chalk: 2.4.2
+      hardhat: 2.13.0(ts-node@10.9.1)(typescript@4.9.5)
     dev: true
 
   /@nomicfoundation/hardhat-network-helpers@1.0.8(hardhat@2.13.0):
@@ -2936,6 +2951,10 @@ packages:
 
   /forever-agent@0.6.1:
     resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
+    dev: true
+
+  /forge-std@1.1.2:
+    resolution: {integrity: sha512-Wfb0iAS9PcfjMKtGpWQw9mXzJxrWD62kJCUqqLcyuI0+VRtJ3j20XembjF3kS20qELYdXft1vD/SPFVWVKMFOw==}
     dev: true
 
   /form-data@2.3.3:
