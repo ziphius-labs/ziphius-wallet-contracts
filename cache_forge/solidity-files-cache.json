@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/EthereumWallet/EthereumWallet.sol": {
-      "lastModificationDate": 1687936934329,
-      "contentHash": "b87afc70784549a4e411dcaf3a44e90d",
+      "lastModificationDate": 1687937116080,
+      "contentHash": "3406c9d4e9519d367399871c9f6ea626",
       "sourceName": "contracts/EthereumWallet/EthereumWallet.sol",
       "solcConfig": {
         "settings": {
@@ -97,8 +97,8 @@
       }
     },
     "contracts/EthereumWallet/EthereumWalletFactory.sol": {
-      "lastModificationDate": 1687935847289,
-      "contentHash": "fef036024384078079c6109fd8328080",
+      "lastModificationDate": 1687937257447,
+      "contentHash": "ad08615e6db2d90016228a1eaf694187",
       "sourceName": "contracts/EthereumWallet/EthereumWalletFactory.sol",
       "solcConfig": {
         "settings": {
@@ -315,8 +315,8 @@
       }
     },
     "contracts/keystore/KeyStore.sol": {
-      "lastModificationDate": 1687936994784,
-      "contentHash": "ffb54b33bdc68d53d9bb749d42e1d1d8",
+      "lastModificationDate": 1687937292000,
+      "contentHash": "d9eb97e6db9b763a7c9636d96da080dc",
       "sourceName": "contracts/keystore/KeyStore.sol",
       "solcConfig": {
         "settings": {
