@@ -2,7 +2,9 @@
 pragma solidity >=0.8.4;
 
 interface IKeyStore {
-    function setValidators(address[] calldata validators, bool[] calldata isActives, uint256 walletIndex) external;
-    function init(address initValidator) external;
-    function isValidator(address validator) external view returns (bool);
+    function addKey(address key, uint256 walletIndex) external;
+    function removeKey(address prevKey, address key, uint256 walletIndex) external;
+    function getKeys() external view returns (address[] memory keys);
+    function init(address initKey) external;
+    function isValidKey(address key) external view returns (bool);
 }

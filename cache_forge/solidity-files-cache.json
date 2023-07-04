@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/EthereumWallet/EthereumWallet.sol": {
-      "lastModificationDate": 1687937116080,
-      "contentHash": "3406c9d4e9519d367399871c9f6ea626",
+      "lastModificationDate": 1688484896694,
+      "contentHash": "7b55e75a2fdf4e46f2c6086ba52dbe7c",
       "sourceName": "contracts/EthereumWallet/EthereumWallet.sol",
       "solcConfig": {
         "settings": {
@@ -45,8 +45,8 @@
         }
       },
       "imports": [
+        "contracts/interfaces/IKey.sol",
         "contracts/interfaces/IKeyStore.sol",
-        "contracts/interfaces/IValidator.sol",
         "contracts/interfaces/IWallet.sol",
         "contracts/keystore/KeyStore.sol",
         "contracts/libraries/CustomERC1967.sol",
@@ -86,8 +86,7 @@
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
         "node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
         "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
-        "node_modules/forge-std/console.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -97,8 +96,8 @@
       }
     },
     "contracts/EthereumWallet/EthereumWalletFactory.sol": {
-      "lastModificationDate": 1687937257447,
-      "contentHash": "ad08615e6db2d90016228a1eaf694187",
+      "lastModificationDate": 1688484922428,
+      "contentHash": "624f6cfd6fa1fdc40f70f89d3ec28315",
       "sourceName": "contracts/EthereumWallet/EthereumWalletFactory.sol",
       "solcConfig": {
         "settings": {
@@ -130,8 +129,8 @@
       },
       "imports": [
         "contracts/EthereumWallet/EthereumWallet.sol",
+        "contracts/interfaces/IKey.sol",
         "contracts/interfaces/IKeyStore.sol",
-        "contracts/interfaces/IValidator.sol",
         "contracts/interfaces/IWallet.sol",
         "contracts/keystore/KeyStore.sol",
         "contracts/libraries/CustomERC1967.sol",
@@ -174,8 +173,7 @@
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
         "node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
         "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
-        "node_modules/forge-std/console.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -184,50 +182,10 @@
         }
       }
     },
-    "contracts/interfaces/IKeyStore.sol": {
-      "lastModificationDate": 1687936856330,
-      "contentHash": "ef6c14d1802b8b42806ed0ccf5cae10d",
-      "sourceName": "contracts/interfaces/IKeyStore.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": ">=0.8.4",
-      "artifacts": {
-        "IKeyStore": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IKeyStore.sol/IKeyStore.json"
-        }
-      }
-    },
-    "contracts/interfaces/IValidator.sol": {
-      "lastModificationDate": 1687573564784,
-      "contentHash": "605f2b15500aa554886c2daaecadefe3",
-      "sourceName": "contracts/interfaces/IValidator.sol",
+    "contracts/interfaces/IKey.sol": {
+      "lastModificationDate": 1688484880196,
+      "contentHash": "f9d695a675dda95ad5a8e2151132ad78",
+      "sourceName": "contracts/interfaces/IKey.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -269,8 +227,48 @@
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
-        "IValidator": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IValidator.sol/IValidator.json"
+        "IKey": {
+          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IKey.sol/IKey.json"
+        }
+      }
+    },
+    "contracts/interfaces/IKeyStore.sol": {
+      "lastModificationDate": 1688484951154,
+      "contentHash": "80800eacf2f4adf4f62b1d11fb62457b",
+      "sourceName": "contracts/interfaces/IKeyStore.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.4",
+      "artifacts": {
+        "IKeyStore": {
+          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IKeyStore.sol/IKeyStore.json"
         }
       }
     },
@@ -315,8 +313,8 @@
       }
     },
     "contracts/keystore/KeyStore.sol": {
-      "lastModificationDate": 1687937292000,
-      "contentHash": "d9eb97e6db9b763a7c9636d96da080dc",
+      "lastModificationDate": 1688485131963,
+      "contentHash": "101f968e5d54adc875f29c607d56bb0a",
       "sourceName": "contracts/keystore/KeyStore.sol",
       "solcConfig": {
         "settings": {
@@ -370,8 +368,7 @@
         "node_modules/@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol",
         "node_modules/@openzeppelin/contracts/utils/Create2.sol",
         "node_modules/@openzeppelin/contracts/utils/StorageSlot.sol",
-        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
-        "node_modules/forge-std/console.sol"
+        "node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
       ],
       "versionRequirement": ">=0.8.4",
       "artifacts": {
@@ -728,8 +725,8 @@
       }
     },
     "contracts/tests/EthereumWallet.test.sol": {
-      "lastModificationDate": 1687936950477,
-      "contentHash": "6f1ef661aa98fb1561a8c1afc8a5e400",
+      "lastModificationDate": 1688485592368,
+      "contentHash": "512716be88258f345dfd08cb7363b9ca",
       "sourceName": "contracts/tests/EthereumWallet.test.sol",
       "solcConfig": {
         "settings": {
@@ -762,8 +759,8 @@
       "imports": [
         "contracts/EthereumWallet/EthereumWallet.sol",
         "contracts/EthereumWallet/EthereumWalletFactory.sol",
+        "contracts/interfaces/IKey.sol",
         "contracts/interfaces/IKeyStore.sol",
-        "contracts/interfaces/IValidator.sol",
         "contracts/interfaces/IWallet.sol",
         "contracts/keystore/KeyStore.sol",
         "contracts/libraries/CustomERC1967.sol",
