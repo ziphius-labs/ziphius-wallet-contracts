@@ -24,7 +24,7 @@ contract EthereumWalletFactory {
         keyStoreImplement = new KeyStore();
     }
 
-    function _createKeyStore(address initValidator, bytes32 salt) internal returns (KeyStore) {
+    function _createKeyStore(address initKey, bytes32 salt) internal returns (KeyStore) {
         address payable keyStoreAddress = getKeyStoreAddress(salt);
         uint codeSize = keyStoreAddress.code.length;
         if (codeSize > 0) {
@@ -33,7 +33,7 @@ contract EthereumWalletFactory {
 
         // using Clones proxy to saving gas cost
         Clones.cloneDeterministic(address(keyStoreImplement), salt);
-        KeyStore(keyStoreAddress).init(initValidator);
+        KeyStore(keyStoreAddress).init(initKey);
 
         return KeyStore(keyStoreAddress);
     }
@@ -56,8 +56,8 @@ contract EthereumWalletFactory {
         return _createWallet(keyStore, walletIndex);
     }
 
-    function createWallet(address initValidator, uint256 walletIndex, bytes32 keyStoreSalt) external returns (EthereumWallet) {
-        KeyStore keyStore = _createKeyStore(initValidator, keyStoreSalt);
+    function createWallet(address initKey, uint256 walletIndex, bytes32 keyStoreSalt) external returns (EthereumWallet) {
+        KeyStore keyStore = _createKeyStore(initKey, keyStoreSalt);
         return _createWallet(address(keyStore), walletIndex);
     }
 

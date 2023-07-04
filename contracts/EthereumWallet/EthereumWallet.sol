@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 import "../interfaces/IWallet.sol";
-import "../interfaces/IValidator.sol";
+import "../interfaces/IKey.sol";
 
 import "../libraries/WalletStorage.sol";
 import "../libraries/DefaultCallbackHandler.sol";
@@ -49,17 +49,17 @@ contract EthereumWallet is IWallet, BaseAccount, Initializable, DefaultCallbackH
         UserOperation calldata userOp,
         bytes32 userOpHash
     ) internal override returns (uint256 validationData) {
-        address validator = address(bytes20(userOp.signature[:20]));
+        address key = address(bytes20(userOp.signature[:20]));
         bytes memory signature = userOp.signature[20:];
 
         IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
 
-        if (keyStore.isValidator(validator)) {
-            if (validator.isContract()) {
-                validationData = IValidator(validator).validateUserOp(userOp, userOpHash);
+        if (keyStore.isValidKey(key)) {
+            if (key.isContract()) {
+                validationData = IKey(key).validateUserOp(userOp, userOpHash);
             } else {
                 bytes32 hash = userOpHash.toEthSignedMessageHash();
-                if (validator == hash.recover(signature)) {
+                if (key == hash.recover(signature)) {
                     validationData = 0;
                 } else {
                     validationData = SIG_VALIDATION_FAILED;
@@ -106,9 +106,14 @@ contract EthereumWallet is IWallet, BaseAccount, Initializable, DefaultCallbackH
         emit Execute();
     }
 
-    function setValidators(address[] calldata validators, bool[] calldata isActives, uint256 walletIndex) external authorized {
+    function addKey(address key, uint256 walletIndex) external authorized {
         IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
-        keyStore.setValidators(validators, isActives, walletIndex);
+        keyStore.addKey(key, walletIndex);
+    }
+
+    function removeKey(address prevKey, address key, uint256 walletIndex) external authorized {
+        IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
+        keyStore.removeKey(prevKey, key, walletIndex);
     }
 
     function entryPoint() public view override returns (IEntryPoint) {
@@ -119,16 +124,16 @@ contract EthereumWallet is IWallet, BaseAccount, Initializable, DefaultCallbackH
      * validate signature base on IERC1271
      */
     function isValidSignature(bytes32 hash, bytes calldata signature) public view override returns (bytes4 magicValue) {
-        address validator = address(bytes20(signature[:20]));
+        address key = address(bytes20(signature[:20]));
         bytes memory trueSignature = signature[20:];
 
         IKeyStore keyStore = IKeyStore(WalletStorage.getKeyStore());
 
-        if (keyStore.isValidator(validator)) {
-            if (validator.isContract()) {
-                magicValue = IValidator(validator).isValidSignature(hash, trueSignature);
+        if (keyStore.isValidKey(key)) {
+            if (key.isContract()) {
+                magicValue = IKey(key).isValidSignature(hash, trueSignature);
             } else {
-                if (validator == hash.recover(trueSignature)) {
+                if (key == hash.recover(trueSignature)) {
                     magicValue = this.isValidSignature.selector;
                 } else {
                     magicValue = bytes4(0xffffffff);
