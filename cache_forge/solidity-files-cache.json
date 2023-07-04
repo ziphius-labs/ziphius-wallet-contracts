@@ -725,8 +725,8 @@
       }
     },
     "contracts/tests/EthereumWallet.test.sol": {
-      "lastModificationDate": 1688485592368,
-      "contentHash": "512716be88258f345dfd08cb7363b9ca",
+      "lastModificationDate": 1688486140511,
+      "contentHash": "b31bf9f79f38c971123e941eaaa97096",
       "sourceName": "contracts/tests/EthereumWallet.test.sol",
       "solcConfig": {
         "settings": {

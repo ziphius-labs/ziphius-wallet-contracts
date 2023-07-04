@@ -87,4 +87,48 @@ contract EthereumWalletTest is Test {
         entryPoint.handleOps(ops, beneficiary);
         require(keyStore.isValidKey(beneficiary), "Fail to add key");
     }
+
+    function test_removeKey() external {
+        KeyStore keyStore = KeyStore(walletFactory.getKeyStoreAddress(bytes32(uint256(1))));
+        EthereumWallet wallet = EthereumWallet(walletFactory.getWalletAddress(address(keyStore), uint256(0)));
+
+        vm.deal(address(wallet), 1 ether);
+
+        UserOperation memory op = entryPoint.fillUserOp(address(wallet), "");
+        op.initCode = abi.encodePacked(bytes20(address(walletFactory)), abi.encodeWithSelector(walletFactory.createWallet.selector, owner, uint256(0), bytes32(uint256(1))));
+        op.callData = abi.encodeWithSelector(
+            wallet.addKey.selector,
+            beneficiary,
+            uint256(0)
+        );
+        op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
+
+        UserOperation[] memory ops = new UserOperation[](1);
+        ops[0] = op;
+
+        entryPoint.handleOps(ops, beneficiary);
+        require(keyStore.isValidKey(beneficiary), "Fail to add key");
+
+        op.nonce = entryPoint.getNonce(address(wallet), 0);
+        op.initCode = "";
+        op.callData = abi.encodeWithSelector(
+            wallet.removeKey.selector,
+            address(0x1),
+            beneficiary,
+            uint256(0)
+        );
+        op.signature = abi.encodePacked(bytes20(owner), entryPoint.signUserOpHash(vm, ownerKey, op));
+        ops[0] = op;
+
+        entryPoint.handleOps(ops, beneficiary);
+        require(!keyStore.isValidKey(beneficiary), "Fail to add key");
+    }
+
+    function _logKey(KeyStore keyStore) internal view {
+        address[] memory keys = keyStore.getKeys();
+
+        for(uint i; i < keys.length; i++) {
+            console.log(keys[i]);
+        }
+    }
 }
